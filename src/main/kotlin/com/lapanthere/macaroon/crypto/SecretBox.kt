@@ -1,4 +1,4 @@
-package com.lapanthere.macaroons.crypto
+package com.lapanthere.macaroon.crypto
 
 import org.bouncycastle.crypto.digests.Blake2bDigest
 import org.bouncycastle.crypto.engines.XSalsa20Engine
@@ -7,12 +7,11 @@ import org.bouncycastle.crypto.params.KeyParameter
 import org.bouncycastle.crypto.params.ParametersWithIV
 import java.security.MessageDigest
 import java.security.SecureRandom
-import java.util.Optional
 import kotlin.math.max
 import kotlin.math.min
 
-internal const val NONCE_SIZE = 24
-internal const val KEY_LEN = 32
+internal const val NONCE_SIZE: Int = 24
+internal const val KEY_LEN: Int = 32
 
 /**
  * Encryption and decryption using XSalsa20Poly1305.
@@ -34,7 +33,7 @@ internal class SecretBox(secretKey: ByteArray) {
      * @param plaintext an arbitrary message
      * @return the ciphertext
      */
-    fun seal(nonce: ByteArray?, plaintext: ByteArray): ByteArray {
+    fun seal(nonce: ByteArray, plaintext: ByteArray): ByteArray {
         val xsalsa20 = XSalsa20Engine()
         val poly1305 = Poly1305()
 
@@ -61,8 +60,7 @@ internal class SecretBox(secretKey: ByteArray) {
      *
      * @param nonce a 24-byte nonce
      * @param ciphertext the encrypted message
-     * @return an [Optional] of the original plaintext, or if either the key, nonce, or
-     * ciphertext was modified, an empty [Optional]
+     * @return the original plaintext, or null
      * @see .nonce
      */
     fun open(nonce: ByteArray, ciphertext: ByteArray): ByteArray? {
