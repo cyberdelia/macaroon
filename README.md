@@ -7,17 +7,16 @@ Add the latest Macaroon version to your project:
 ### Using Gradle:
 
 ```kotlin
-implementation("com.lapanthere:macaroon:1.0.0")
+implementation("com.lapanthere:macaroon:0.1")
 ```
 
 ### Using Maven:
 
 ```xml
-
 <dependency>
     <groupId>com.lapanthere</groupId>
     <artifactId>macaroon</artifactId>
-    <version>1.0.0</version>
+    <version>0.1</version>
 </dependency>
 ```
 
@@ -30,7 +29,7 @@ val key = generateSecretKey()
 ```
 
 ```java
-var key=Keys.generateSecretKey()
+var key = Keys.generateSecretKey()
 ```
 
 Or using a public/private key setup:
@@ -44,7 +43,7 @@ val key = sharedSecret(publicKey, privateKey)
 ```java
 var privateKey = Keys.generatePrivateKey();
 var publicKey = Keys.generatePublicKey();
-var key = Keys.sharedSecret(publicKey, privateKey);
+var key = Keys.sharedSecret(publicKey,privateKey);
 ```
 
 Once you have a secret key, you can now build a macaroon:
