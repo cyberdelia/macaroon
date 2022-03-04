@@ -7,8 +7,7 @@ plugins {
     id("org.jmailen.kotlinter") version "3.9.0"
 }
 
-group = "com.lapanthere.macaroon"
-version = "1.0-SNAPSHOT"
+group = "com.lapanthere"
 
 repositories {
     mavenCentral()
@@ -54,9 +53,7 @@ publishing {
     }
 
     publications {
-        create<MavenPublication>("default") {
-            from(components["java"])
-            artifact(tasks["sourcesJar"])
+        create<MavenPublication>("github") {
             pom {
                 name.set("Macaroon")
                 description.set("Building and verifying macaroon")
