@@ -85,3 +85,15 @@ var verifier = new Verifier.Builder(macaroon)
     .build();
 verifier.isValid(key);
 ```
+
+To de/serialize a macaroon (using the v2 format):
+
+```kotlin
+val serialized = macaroon.serialize()
+val macaroon = Macaroon(serialized)
+```
+
+```java
+var serialized = macaroon.serialize();
+var macaroon = Macaroon.from(serialized);
+```
