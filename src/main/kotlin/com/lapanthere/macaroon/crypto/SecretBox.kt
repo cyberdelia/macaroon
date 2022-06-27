@@ -84,7 +84,11 @@ internal class SecretBox(secretKey: ByteArray) {
         // extract mac
         val presentedMAC = ByteArray(poly1305.macSize)
         System.arraycopy(
-            ciphertext, 0, presentedMAC, 0, min(ciphertext.size, poly1305.macSize)
+            ciphertext,
+            0,
+            presentedMAC,
+            0,
+            min(ciphertext.size, poly1305.macSize)
         )
 
         // compare macs

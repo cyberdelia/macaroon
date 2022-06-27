@@ -87,7 +87,10 @@ public class Verifier private constructor(
         private val verifiers: MutableList<CaveatVerifier> = mutableListOf()
     ) {
         public constructor(macaroon: Macaroon) : this(
-            macaroon, mutableListOf(), mutableListOf(), mutableListOf()
+            macaroon,
+            mutableListOf(),
+            mutableListOf(),
+            mutableListOf()
         )
 
         public fun satisfy(caveat: String): Builder {

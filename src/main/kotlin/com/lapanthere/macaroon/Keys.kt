@@ -1,4 +1,5 @@
 @file:JvmName("Keys")
+
 package com.lapanthere.macaroon
 
 import com.lapanthere.macaroon.crypto.HSalsa20
