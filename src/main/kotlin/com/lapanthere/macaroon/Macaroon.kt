@@ -67,7 +67,10 @@ public class Macaroon internal constructor(
         private var caveats: MutableList<Caveat> = mutableListOf()
     ) {
         public constructor(macaroon: Macaroon) : this(
-            macaroon.location, macaroon.identifier, macaroon.signature, macaroon.caveats.toMutableList()
+            macaroon.location,
+            macaroon.identifier,
+            macaroon.signature,
+            macaroon.caveats.toMutableList()
         )
 
         public constructor(
@@ -75,7 +78,9 @@ public class Macaroon internal constructor(
             identifier: String,
             key: ByteArray // Not a SecretKey for Java compatibility.
         ) : this(
-            location, identifier, signature = hmac(deriveKey(key), identifier.toByteArray())
+            location,
+            identifier,
+            signature = hmac(deriveKey(key), identifier.toByteArray())
         )
 
         public fun bind(macaroon: Macaroon): Builder {
