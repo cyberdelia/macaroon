@@ -23,7 +23,7 @@ public class Verifier private constructor(
     private val root: Macaroon,
     private val bounded: List<Macaroon> = emptyList(),
     private val predicates: List<Caveat> = emptyList(),
-    private val verifiers: List<CaveatVerifier> = emptyList()
+    private val verifiers: List<CaveatVerifier> = emptyList(),
 ) {
     /**
      * Returns true if the macaroon is valid for the given secret.
@@ -67,7 +67,7 @@ public class Verifier private constructor(
         val box = SecretBox(signature)
         val plaintext = box.open(
             vid.sliceArray(0 until NONCE_SIZE),
-            vid.sliceArray(NONCE_SIZE until vid.size)
+            vid.sliceArray(NONCE_SIZE until vid.size),
         )
         return if (plaintext != null) {
             val calculatedSignature = calculateSignature(macaroon, plaintext)
@@ -84,13 +84,13 @@ public class Verifier private constructor(
         private val macaroon: Macaroon,
         private val bounded: MutableList<Macaroon> = mutableListOf(),
         private val predicates: MutableList<Caveat> = mutableListOf(),
-        private val verifiers: MutableList<CaveatVerifier> = mutableListOf()
+        private val verifiers: MutableList<CaveatVerifier> = mutableListOf(),
     ) {
         public constructor(macaroon: Macaroon) : this(
             macaroon,
             mutableListOf(),
             mutableListOf(),
-            mutableListOf()
+            mutableListOf(),
         )
 
         public fun satisfy(caveat: String): Builder {

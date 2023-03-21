@@ -56,7 +56,7 @@ internal class VerifierTest {
         assertFalse(
             buildVerifier(macaroon) {
                 satisfy("account = 3735928559")
-            }.isValid(secret)
+            }.isValid(secret),
         )
     }
 
@@ -74,7 +74,7 @@ internal class VerifierTest {
                 satisfy("IP = 127.0.0.1")
                 satisfy("browser = Chrome")
                 satisfy("action = deposit")
-            }.isValid(secret)
+            }.isValid(secret),
         )
     }
 
@@ -155,7 +155,7 @@ internal class VerifierTest {
                 satisfy("account", 15)
                 satisfy("time", Instant.now())
                 satisfy("value", Constructable("value"))
-            }.isValid(secret)
+            }.isValid(secret),
         )
 
         assertFalse(
@@ -164,7 +164,7 @@ internal class VerifierTest {
                 satisfy("account", 5)
                 satisfy("time", Instant.now())
                 satisfy("value", Constructable("different"))
-            }.isValid(secret)
+            }.isValid(secret),
         )
     }
 
@@ -179,14 +179,14 @@ internal class VerifierTest {
             buildVerifier(macaroon) {
                 satisfy("actions", "read", "write")
                 satisfy("excludes", 4, 6)
-            }.isValid(secret)
+            }.isValid(secret),
         )
 
         assertFalse(
             buildVerifier(macaroon) {
                 satisfy("actions", "delete", "create")
                 satisfy("excludes", 5, 7)
-            }.isValid(secret)
+            }.isValid(secret),
         )
     }
 }

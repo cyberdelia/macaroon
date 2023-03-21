@@ -88,7 +88,7 @@ internal class SecretBox(secretKey: ByteArray) {
             0,
             presentedMAC,
             0,
-            min(ciphertext.size, poly1305.macSize)
+            min(ciphertext.size, poly1305.macSize),
         )
 
         // compare macs

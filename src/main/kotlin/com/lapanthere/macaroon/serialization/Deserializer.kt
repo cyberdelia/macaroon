@@ -38,7 +38,7 @@ internal object Deserializer {
 
     private class Decoder(b: ByteArray) : Closeable {
         private val inputStream = DataInputStream(
-            Base64.getUrlDecoder().wrap(ByteArrayInputStream(b)).buffered()
+            Base64.getUrlDecoder().wrap(ByteArrayInputStream(b)).buffered(),
         )
 
         fun readInt(): Int = inputStream.readUnsignedByte()

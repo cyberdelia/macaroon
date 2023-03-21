@@ -6,7 +6,7 @@ import java.util.Base64
 public data class Caveat internal constructor(
     public val identifier: String,
     public val location: String? = null,
-    public val vid: ByteArray? = null
+    public val vid: ByteArray? = null,
 ) : Serializable {
     public val value: String
         get() = identifier

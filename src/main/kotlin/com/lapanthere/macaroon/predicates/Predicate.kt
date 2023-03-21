@@ -102,7 +102,7 @@ public data class Field(public val name: String) {
 public class Predicate internal constructor(
     private val field: Field,
     private val operator: Operator,
-    private val value: Any
+    private val value: Any,
 ) {
     override fun toString(): String = "$field $operator " +
         when (value) {
@@ -114,11 +114,11 @@ public class Predicate internal constructor(
 public class PredicateVerifier<T : Comparable<T>> @PublishedApi internal constructor(
     field: String,
     private val value: T,
-    private val klass: KClass<T>
+    private val klass: KClass<T>,
 ) : CaveatVerifier {
     private val matcher =
         Regex(
-            """\A${Regex.escape(field)} (?<operator>${Operator.values().joinToString("|")}) (?<value>.*)\z"""
+            """\A${Regex.escape(field)} (?<operator>${Operator.values().joinToString("|")}) (?<value>.*)\z""",
         )
 
     @Suppress("UNCHECKED_CAST")
@@ -145,11 +145,11 @@ public class PredicateVerifier<T : Comparable<T>> @PublishedApi internal constru
 public class CollectionPredicateVerifier<T : Any> @PublishedApi internal constructor(
     field: String,
     private val value: Collection<T>,
-    private val klass: KClass<T>
+    private val klass: KClass<T>,
 ) : CaveatVerifier {
     private val matcher =
         Regex(
-            """\A${Regex.escape(field)} (?<operator>${Operator.values().joinToString("|")}) (?<value>.*)\z"""
+            """\A${Regex.escape(field)} (?<operator>${Operator.values().joinToString("|")}) (?<value>.*)\z""",
         )
 
     override fun verify(caveat: Caveat): Boolean {
