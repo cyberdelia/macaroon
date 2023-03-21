@@ -17,7 +17,7 @@ public class Macaroon internal constructor(
     public val location: String? = null,
     public val identifier: String,
     public val caveats: List<Caveat> = emptyList(),
-    public val signature: ByteArray
+    public val signature: ByteArray,
 ) : Serializable {
     public companion object {
         @JvmStatic
@@ -64,23 +64,23 @@ public class Macaroon internal constructor(
         private var location: String?,
         private var identifier: String,
         private var signature: ByteArray,
-        private var caveats: MutableList<Caveat> = mutableListOf()
+        private var caveats: MutableList<Caveat> = mutableListOf(),
     ) {
         public constructor(macaroon: Macaroon) : this(
             macaroon.location,
             macaroon.identifier,
             macaroon.signature,
-            macaroon.caveats.toMutableList()
+            macaroon.caveats.toMutableList(),
         )
 
         public constructor(
             location: String?,
             identifier: String,
-            key: ByteArray // Not a SecretKey for Java compatibility.
+            key: ByteArray, // Not a SecretKey for Java compatibility.
         ) : this(
             location,
             identifier,
-            signature = hmac(deriveKey(key), identifier.toByteArray())
+            signature = hmac(deriveKey(key), identifier.toByteArray()),
         )
 
         public fun bind(macaroon: Macaroon): Builder {
@@ -133,7 +133,7 @@ public fun buildMacaroon(
     location: String,
     key: SecretKey,
     identifier: String,
-    builderAction: Macaroon.Builder.() -> Unit = {}
+    builderAction: Macaroon.Builder.() -> Unit = {},
 ): Macaroon = Macaroon.Builder(location, identifier, key.bytes).apply(builderAction).build()
 
 /**
@@ -144,7 +144,7 @@ public fun buildMacaroon(
  */
 public fun buildMacaroon(
     macaroon: Macaroon,
-    builderAction: Macaroon.Builder.() -> Unit = {}
+    builderAction: Macaroon.Builder.() -> Unit = {},
 ): Macaroon = Macaroon.Builder(macaroon).apply(builderAction).build()
 
 /**

@@ -33,7 +33,7 @@ internal class MacaroonTest {
         val macaroon = buildMacaroon(
             buildMacaroon(location, secret, identifier) {
                 require("account = 3735928559")
-            }
+            },
         )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
@@ -47,7 +47,7 @@ internal class MacaroonTest {
                 require("account = 3735928559")
                 require("time < 2015-01-01T00:00")
                 require("email = alice@example.org")
-            }
+            },
         )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
@@ -65,7 +65,7 @@ internal class MacaroonTest {
             buildMacaroon(location, secret, identifier) {
                 require("account = 3735928559")
                 require(thirdPartyLocation, thirdPartyKey, thirdPartyIdentifier)
-            }
+            },
         )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
@@ -83,16 +83,16 @@ internal class MacaroonTest {
                 require(
                     "http://auth.mybank/",
                     generateSecretKey(),
-                    "this was how we remind auth of key/pred"
+                    "this was how we remind auth of key/pred",
                 )
-            }
+            },
         )
 
         val macaroon = buildMacaroon(
             buildMacaroon(location, secret, identifier) {
                 require("account = 3735928559")
                 bind(discharged)
-            }
+            },
         )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
