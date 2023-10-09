@@ -20,9 +20,10 @@ internal class MacaroonTest {
 
     @Test
     fun `add first part caveat`() {
-        val macaroon = buildMacaroon(location, secret, identifier) {
-            require("account = 3735928559")
-        }
+        val macaroon =
+            buildMacaroon(location, secret, identifier) {
+                require("account = 3735928559")
+            }
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
         assertEquals(Caveat(identifier = "account = 3735928559"), macaroon.caveats.first())
@@ -30,11 +31,12 @@ internal class MacaroonTest {
 
     @Test
     fun `can be create from an existing macaroon`() {
-        val macaroon = buildMacaroon(
-            buildMacaroon(location, secret, identifier) {
-                require("account = 3735928559")
-            },
-        )
+        val macaroon =
+            buildMacaroon(
+                buildMacaroon(location, secret, identifier) {
+                    require("account = 3735928559")
+                },
+            )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
         assertEquals(Caveat("account = 3735928559"), macaroon.caveats.first())
@@ -42,13 +44,14 @@ internal class MacaroonTest {
 
     @Test
     fun `supports many first part caveats`() {
-        val macaroon = buildMacaroon(
-            buildMacaroon(location, secret, identifier) {
-                require("account = 3735928559")
-                require("time < 2015-01-01T00:00")
-                require("email = alice@example.org")
-            },
-        )
+        val macaroon =
+            buildMacaroon(
+                buildMacaroon(location, secret, identifier) {
+                    require("account = 3735928559")
+                    require("time < 2015-01-01T00:00")
+                    require("email = alice@example.org")
+                },
+            )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
         assertEquals(Caveat("account = 3735928559"), macaroon.caveats[0])
@@ -61,12 +64,13 @@ internal class MacaroonTest {
         val thirdPartyLocation = "http://auth.mybank/"
         val thirdPartyKey = generateSecretKey()
         val thirdPartyIdentifier = "this was how we remind auth of key/pred"
-        val macaroon = buildMacaroon(
-            buildMacaroon(location, secret, identifier) {
-                require("account = 3735928559")
-                require(thirdPartyLocation, thirdPartyKey, thirdPartyIdentifier)
-            },
-        )
+        val macaroon =
+            buildMacaroon(
+                buildMacaroon(location, secret, identifier) {
+                    require("account = 3735928559")
+                    require(thirdPartyLocation, thirdPartyKey, thirdPartyIdentifier)
+                },
+            )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
         assertEquals(Caveat("account = 3735928559"), macaroon.caveats[0])
@@ -77,23 +81,25 @@ internal class MacaroonTest {
 
     @Test
     fun `can bind macaroon`() {
-        val discharged = buildMacaroon(
-            buildMacaroon(location, secret, identifier) {
-                require("account = 3735928559")
-                require(
-                    "http://auth.mybank/",
-                    generateSecretKey(),
-                    "this was how we remind auth of key/pred",
-                )
-            },
-        )
+        val discharged =
+            buildMacaroon(
+                buildMacaroon(location, secret, identifier) {
+                    require("account = 3735928559")
+                    require(
+                        "http://auth.mybank/",
+                        generateSecretKey(),
+                        "this was how we remind auth of key/pred",
+                    )
+                },
+            )
 
-        val macaroon = buildMacaroon(
-            buildMacaroon(location, secret, identifier) {
-                require("account = 3735928559")
-                bind(discharged)
-            },
-        )
+        val macaroon =
+            buildMacaroon(
+                buildMacaroon(location, secret, identifier) {
+                    require("account = 3735928559")
+                    bind(discharged)
+                },
+            )
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
         assertEquals(Caveat("account = 3735928559"), macaroon.caveats[0])
@@ -103,10 +109,11 @@ internal class MacaroonTest {
     @Test
     fun `complex predicates`() {
         val expirationTime = Instant.now().plusSeconds(60)
-        val macaroon = buildMacaroon(location, secret, identifier) {
-            require(field("time") lt expirationTime)
-            require(field("actions") containsAll listOf("read", "write"))
-        }
+        val macaroon =
+            buildMacaroon(location, secret, identifier) {
+                require(field("time") lt expirationTime)
+                require(field("actions") containsAll listOf("read", "write"))
+            }
         assertEquals(location, macaroon.location)
         assertEquals(identifier, macaroon.identifier)
         assertEquals(Caveat("time < $expirationTime"), macaroon.caveats.first())

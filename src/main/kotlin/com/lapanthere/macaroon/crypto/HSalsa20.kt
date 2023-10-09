@@ -12,7 +12,11 @@ internal object HSalsa20 {
     private val SIGMA_8 = Pack.littleEndianToInt(SIGMA, 8)
     private val SIGMA_12 = Pack.littleEndianToInt(SIGMA, 12)
 
-    fun hsalsa20(output: ByteArray, input: ByteArray, k: ByteArray) {
+    fun hsalsa20(
+        output: ByteArray,
+        input: ByteArray,
+        k: ByteArray,
+    ) {
         val x = IntArray(16)
         val in0 = Pack.littleEndianToInt(input, 0)
         val in4 = Pack.littleEndianToInt(input, 4)

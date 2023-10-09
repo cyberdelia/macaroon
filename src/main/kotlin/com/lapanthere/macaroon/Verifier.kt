@@ -32,43 +32,56 @@ public class Verifier private constructor(
      * @return true if the verification succeeded
      */
     @JvmName("isValid")
-    public fun isValid(key: SecretKey): Boolean = try {
-        validateMacaroon(root, deriveKey(key.bytes))
-    } catch (e: ValidationException) {
-        false
-    }
+    public fun isValid(key: SecretKey): Boolean =
+        try {
+            validateMacaroon(root, deriveKey(key.bytes))
+        } catch (e: ValidationException) {
+            false
+        }
 
-    private fun calculateSignature(macaroon: Macaroon, key: ByteArray): ByteArray {
+    private fun calculateSignature(
+        macaroon: Macaroon,
+        key: ByteArray,
+    ): ByteArray {
         var signature = hmac(key, macaroon.identifier.toByteArray())
         macaroon.caveats.forEach { caveat ->
-            signature = when {
-                caveat.vid != null -> {
-                    val bound = bounded.firstOrNull { it.identifier == caveat.identifier }
-                        ?: throw ValidationException("invalid third-party caveat")
+            signature =
+                when {
+                    caveat.vid != null -> {
+                        val bound =
+                            bounded.firstOrNull { it.identifier == caveat.identifier }
+                                ?: throw ValidationException("invalid third-party caveat")
 
-                    if (!validateBoundMacaroon(bound, caveat.vid, signature)) {
-                        throw ValidationException("invalid third-party caveat")
+                        if (!validateBoundMacaroon(bound, caveat.vid, signature)) {
+                            throw ValidationException("invalid third-party caveat")
+                        }
+
+                        hmac(signature, caveat.vid, caveat.identifier.toByteArray())
                     }
-
-                    hmac(signature, caveat.vid, caveat.identifier.toByteArray())
+                    (predicates.contains(caveat) || verifiers.verify(caveat)) ->
+                        hmac(signature, caveat.identifier.toByteArray())
+                    else -> throw ValidationException("invalid caveat")
                 }
-                (predicates.contains(caveat) || verifiers.verify(caveat)) ->
-                    hmac(signature, caveat.identifier.toByteArray())
-                else -> throw ValidationException("invalid caveat")
-            }
         }
         return signature
     }
 
-    private fun validateMacaroon(macaroon: Macaroon, key: ByteArray): Boolean =
-        calculateSignature(macaroon, key).isEqual(macaroon.signature)
+    private fun validateMacaroon(
+        macaroon: Macaroon,
+        key: ByteArray,
+    ): Boolean = calculateSignature(macaroon, key).isEqual(macaroon.signature)
 
-    private fun validateBoundMacaroon(macaroon: Macaroon, vid: ByteArray, signature: ByteArray): Boolean {
+    private fun validateBoundMacaroon(
+        macaroon: Macaroon,
+        vid: ByteArray,
+        signature: ByteArray,
+    ): Boolean {
         val box = SecretBox(signature)
-        val plaintext = box.open(
-            vid.sliceArray(0 until NONCE_SIZE),
-            vid.sliceArray(NONCE_SIZE until vid.size),
-        )
+        val plaintext =
+            box.open(
+                vid.sliceArray(0 until NONCE_SIZE),
+                vid.sliceArray(NONCE_SIZE until vid.size),
+            )
         return if (plaintext != null) {
             val calculatedSignature = calculateSignature(macaroon, plaintext)
             val boundSignature = hmac(emptyKey(), root.signature, calculatedSignature)
@@ -108,41 +121,67 @@ public class Verifier private constructor(
             return this
         }
 
-        public inline fun <reified T : Comparable<T>> satisfy(field: String, value: T): Builder =
-            satisfy(field, value, T::class.java)
+        public inline fun <reified T : Comparable<T>> satisfy(
+            field: String,
+            value: T,
+        ): Builder = satisfy(field, value, T::class.java)
 
-        public fun satisfy(field: String, boolean: Boolean): Builder =
-            satisfy(field, boolean, Boolean::class.java)
+        public fun satisfy(
+            field: String,
+            boolean: Boolean,
+        ): Builder = satisfy(field, boolean, Boolean::class.java)
 
-        public fun satisfy(field: String, string: String): Builder =
-            satisfy(field, string, String::class.java)
+        public fun satisfy(
+            field: String,
+            string: String,
+        ): Builder = satisfy(field, string, String::class.java)
 
-        public fun satisfy(field: String, int: Int): Builder =
-            satisfy(field, int, Int::class.java)
+        public fun satisfy(
+            field: String,
+            int: Int,
+        ): Builder = satisfy(field, int, Int::class.java)
 
-        public fun satisfy(field: String, long: Long): Builder =
-            satisfy(field, long, Long::class.java)
+        public fun satisfy(
+            field: String,
+            long: Long,
+        ): Builder = satisfy(field, long, Long::class.java)
 
-        public fun satisfy(field: String, double: Double): Builder =
-            satisfy(field, double, Double::class.java)
+        public fun satisfy(
+            field: String,
+            double: Double,
+        ): Builder = satisfy(field, double, Double::class.java)
 
-        public fun satisfy(field: String, float: Float): Builder =
-            satisfy(field, float, Float::class.java)
+        public fun satisfy(
+            field: String,
+            float: Float,
+        ): Builder = satisfy(field, float, Float::class.java)
 
-        public fun satisfy(field: String, instant: Instant): Builder =
-            satisfy(field, instant, Instant::class.java)
+        public fun satisfy(
+            field: String,
+            instant: Instant,
+        ): Builder = satisfy(field, instant, Instant::class.java)
 
-        public fun <T : Comparable<T>> satisfy(field: String, value: T, javaClass: Class<T>): Builder =
-            satisfy(PredicateVerifier(field, value, javaClass.kotlin))
+        public fun <T : Comparable<T>> satisfy(
+            field: String,
+            value: T,
+            javaClass: Class<T>,
+        ): Builder = satisfy(PredicateVerifier(field, value, javaClass.kotlin))
 
-        public inline fun <reified T : Any> satisfy(field: String, values: Collection<T>): Builder =
-            satisfy(field, values, T::class.java)
+        public inline fun <reified T : Any> satisfy(
+            field: String,
+            values: Collection<T>,
+        ): Builder = satisfy(field, values, T::class.java)
 
-        public inline fun <reified T : Any> satisfy(field: String, vararg values: T): Builder =
-            satisfy(field, values.toList(), T::class.java)
+        public inline fun <reified T : Any> satisfy(
+            field: String,
+            vararg values: T,
+        ): Builder = satisfy(field, values.toList(), T::class.java)
 
-        public fun <T : Any> satisfy(field: String, values: Collection<T>, javaClass: Class<T>): Builder =
-            satisfy(CollectionPredicateVerifier(field, values, javaClass.kotlin))
+        public fun <T : Any> satisfy(
+            field: String,
+            values: Collection<T>,
+            javaClass: Class<T>,
+        ): Builder = satisfy(CollectionPredicateVerifier(field, values, javaClass.kotlin))
 
         public fun build(): Verifier = Verifier(macaroon, bounded, predicates, verifiers)
     }
@@ -154,8 +193,10 @@ public class Verifier private constructor(
  * @param macaroon the macaroon to verify.
  * @return a new Verifier
  */
-public fun buildVerifier(macaroon: Macaroon, builderAction: Verifier.Builder.() -> Unit = {}): Verifier =
-    Verifier.Builder(macaroon).apply(builderAction).build()
+public fun buildVerifier(
+    macaroon: Macaroon,
+    builderAction: Verifier.Builder.() -> Unit = {},
+): Verifier = Verifier.Builder(macaroon).apply(builderAction).build()
 
 // Expose constant time comparison.
 private fun ByteArray.isEqual(other: ByteArray): Boolean = MessageDigest.isEqual(this, other)

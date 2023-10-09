@@ -11,7 +11,12 @@ import java.io.Closeable
 import java.util.Base64
 
 internal enum class Field(val value: Int) {
-    LOCATION(1), IDENTIFIER(2), VERIFIER_ID(4), SIGNATURE(6), END_OF_SECTION(0);
+    LOCATION(1),
+    IDENTIFIER(2),
+    VERIFIER_ID(4),
+    SIGNATURE(6),
+    END_OF_SECTION(0),
+    ;
 
     companion object {
         @JvmStatic
@@ -20,23 +25,24 @@ internal enum class Field(val value: Int) {
 }
 
 internal object Serializer {
-    fun serialize(macaroon: Macaroon): ByteArray = Encoder().use {
-        it.write(2)
-        it.write(LOCATION, macaroon.location)
-        it.write(IDENTIFIER, macaroon.identifier)
-        it.write(END_OF_SECTION)
-
-        macaroon.caveats.forEach { caveat ->
-            it.write(LOCATION, caveat.location)
-            it.write(IDENTIFIER, caveat.identifier)
-            it.write(VERIFIER_ID, caveat.vid)
+    fun serialize(macaroon: Macaroon): ByteArray =
+        Encoder().use {
+            it.write(2)
+            it.write(LOCATION, macaroon.location)
+            it.write(IDENTIFIER, macaroon.identifier)
             it.write(END_OF_SECTION)
-        }
 
-        it.write(END_OF_SECTION)
-        it.write(SIGNATURE, macaroon.signature)
-        it
-    }.toByteArray()
+            macaroon.caveats.forEach { caveat ->
+                it.write(LOCATION, caveat.location)
+                it.write(IDENTIFIER, caveat.identifier)
+                it.write(VERIFIER_ID, caveat.vid)
+                it.write(END_OF_SECTION)
+            }
+
+            it.write(END_OF_SECTION)
+            it.write(SIGNATURE, macaroon.signature)
+            it
+        }.toByteArray()
 
     private class Encoder : Closeable {
         private val outputStream = ByteArrayOutputStream()
@@ -47,14 +53,20 @@ internal object Serializer {
             wrappedStream.write(b)
         }
 
-        fun write(field: Field, value: ByteArray?) {
+        fun write(
+            field: Field,
+            value: ByteArray?,
+        ) {
             if (value != null) {
                 write(field)
                 write(value)
             }
         }
 
-        fun write(field: Field, value: String?) {
+        fun write(
+            field: Field,
+            value: String?,
+        ) {
             if (value != null) {
                 write(field)
                 write(value)

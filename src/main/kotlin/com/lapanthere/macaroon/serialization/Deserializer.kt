@@ -13,33 +13,35 @@ import java.io.DataInputStream
 import java.util.Base64
 
 internal object Deserializer {
-    fun deserialize(data: ByteArray): Macaroon = Decoder(data).use {
-        require(it.readInt() == 2) { "invalid serialization version" }
-        val location = it.readString(LOCATION)
-        val identifier = it.readString(IDENTIFIER)
-        require(identifier != null)
-        require(it.readInt() == END_OF_SECTION.value) { "invalid macaroon" }
-
-        val caveats = mutableListOf<Caveat>()
-        while (it.peekField() != END_OF_SECTION) {
-            val caveatLocation = it.readString(LOCATION)
-            val caveatIdentifier = it.readString(IDENTIFIER)
-            require(caveatIdentifier != null) { "invalid macaroon" }
-            val vid = it.readBytes(VERIFIER_ID)
+    fun deserialize(data: ByteArray): Macaroon =
+        Decoder(data).use {
+            require(it.readInt() == 2) { "invalid serialization version" }
+            val location = it.readString(LOCATION)
+            val identifier = it.readString(IDENTIFIER)
+            require(identifier != null)
             require(it.readInt() == END_OF_SECTION.value) { "invalid macaroon" }
-            caveats.add(Caveat(caveatIdentifier, caveatLocation, vid))
+
+            val caveats = mutableListOf<Caveat>()
+            while (it.peekField() != END_OF_SECTION) {
+                val caveatLocation = it.readString(LOCATION)
+                val caveatIdentifier = it.readString(IDENTIFIER)
+                require(caveatIdentifier != null) { "invalid macaroon" }
+                val vid = it.readBytes(VERIFIER_ID)
+                require(it.readInt() == END_OF_SECTION.value) { "invalid macaroon" }
+                caveats.add(Caveat(caveatIdentifier, caveatLocation, vid))
+            }
+
+            require(it.readInt() == END_OF_SECTION.value) { "invalid macaroon" }
+            val signature = it.readBytes(SIGNATURE)
+            require(signature != null) { "invalid macaroon" }
+            Macaroon(location, identifier, caveats, signature)
         }
 
-        require(it.readInt() == END_OF_SECTION.value) { "invalid macaroon" }
-        val signature = it.readBytes(SIGNATURE)
-        require(signature != null) { "invalid macaroon" }
-        Macaroon(location, identifier, caveats, signature)
-    }
-
     private class Decoder(b: ByteArray) : Closeable {
-        private val inputStream = DataInputStream(
-            Base64.getUrlDecoder().wrap(ByteArrayInputStream(b)).buffered(),
-        )
+        private val inputStream =
+            DataInputStream(
+                Base64.getUrlDecoder().wrap(ByteArrayInputStream(b)).buffered(),
+            )
 
         fun readInt(): Int = inputStream.readUnsignedByte()
 
