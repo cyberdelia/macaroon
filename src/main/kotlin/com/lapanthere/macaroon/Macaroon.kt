@@ -30,8 +30,10 @@ public class Macaroon internal constructor(
 
     public fun serialize(): ByteArray = Serializer.serialize(this)
 
-    public fun verify(key: SecretKey, builderAction: Verifier.Builder.() -> Unit = {}): Boolean =
-        buildVerifier(this, builderAction).isValid(key)
+    public fun verify(
+        key: SecretKey,
+        builderAction: Verifier.Builder.() -> Unit = {},
+    ): Boolean = buildVerifier(this, builderAction).isValid(key)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -53,12 +55,13 @@ public class Macaroon internal constructor(
         return result
     }
 
-    override fun toString(): String = """
+    override fun toString(): String =
+        """
         |location $location
         |identifier $identifier
         |${caveats.joinToString("\n") { "$it" }}
         |signature ${signature.toHex()}
-    """.trimMargin()
+        """.trimMargin()
 
     public class Builder private constructor(
         private var location: String?,
@@ -76,7 +79,8 @@ public class Macaroon internal constructor(
         public constructor(
             location: String?,
             identifier: String,
-            key: ByteArray, // Not a SecretKey for Java compatibility.
+            // Not a SecretKey for Java compatibility.
+            key: ByteArray,
         ) : this(
             location,
             identifier,
@@ -91,8 +95,7 @@ public class Macaroon internal constructor(
             return this
         }
 
-        public fun require(predicate: Predicate): Builder =
-            require(predicate.toString())
+        public fun require(predicate: Predicate): Builder = require(predicate.toString())
 
         public fun require(caveat: String): Builder {
             val bytes = caveat.toByteArray()
@@ -103,7 +106,11 @@ public class Macaroon internal constructor(
             return this
         }
 
-        public fun require(location: String, key: SecretKey, identifier: String): Builder {
+        public fun require(
+            location: String,
+            key: SecretKey,
+            identifier: String,
+        ): Builder {
             check(caveats.size < MAX_CAVEATS) { "too many caveats" }
 
             val derived = deriveKey(key.bytes)

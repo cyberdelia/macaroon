@@ -33,7 +33,10 @@ internal class SecretBox(secretKey: ByteArray) {
      * @param plaintext an arbitrary message
      * @return the ciphertext
      */
-    fun seal(nonce: ByteArray, plaintext: ByteArray): ByteArray {
+    fun seal(
+        nonce: ByteArray,
+        plaintext: ByteArray,
+    ): ByteArray {
         val xsalsa20 = XSalsa20Engine()
         val poly1305 = Poly1305()
 
@@ -63,7 +66,10 @@ internal class SecretBox(secretKey: ByteArray) {
      * @return the original plaintext, or null
      * @see .nonce
      */
-    fun open(nonce: ByteArray, ciphertext: ByteArray): ByteArray? {
+    fun open(
+        nonce: ByteArray,
+        ciphertext: ByteArray,
+    ): ByteArray? {
         val xsalsa20 = XSalsa20Engine()
         val poly1305 = Poly1305()
 

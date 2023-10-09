@@ -6,7 +6,10 @@ import javax.crypto.spec.SecretKeySpec
 private const val ALGORITHM = "HmacSHA256"
 private val MAGIC_KEY = "macaroon-key-generator".toByteArray()
 
-internal fun hmac(key: ByteArray, message: ByteArray): ByteArray {
+internal fun hmac(
+    key: ByteArray,
+    message: ByteArray,
+): ByteArray {
     val spec = SecretKeySpec(key, ALGORITHM)
     val mac = Mac.getInstance(ALGORITHM)
     mac.init(spec)
@@ -17,5 +20,8 @@ internal fun deriveKey(key: ByteArray): ByteArray = hmac(MAGIC_KEY, key)
 
 internal fun emptyKey() = ByteArray(KEY_LEN)
 
-internal fun hmac(key: ByteArray, message1: ByteArray, message2: ByteArray): ByteArray =
-    hmac(key, hmac(key, message1) + hmac(key, message2))
+internal fun hmac(
+    key: ByteArray,
+    message1: ByteArray,
+    message2: ByteArray,
+): ByteArray = hmac(key, hmac(key, message1) + hmac(key, message2))

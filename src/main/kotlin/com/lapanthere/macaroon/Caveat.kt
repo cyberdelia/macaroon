@@ -14,17 +14,18 @@ public data class Caveat internal constructor(
     public val isThirdParty: Boolean = vid != null
     public val isFirstParty: Boolean = !isThirdParty
 
-    override fun toString(): String = when {
-        vid != null -> """
+    override fun toString(): String =
+        when {
+            vid != null -> """
             cid $identifier
             vid ${Base64.getUrlEncoder().withoutPadding().encodeToString(vid)}
             cl  $location
         """
-        else ->
-            """
+            else ->
+                """
             cid $value
             """
-    }.trimIndent()
+        }.trimIndent()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -35,7 +36,9 @@ public data class Caveat internal constructor(
         if (vid != null) {
             if (other.vid == null) return false
             if (!vid.contentEquals(other.vid)) return false
-        } else if (other.vid != null) return false
+        } else if (other.vid != null) {
+            return false
+        }
 
         return true
     }

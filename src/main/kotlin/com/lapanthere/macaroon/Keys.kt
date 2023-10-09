@@ -13,8 +13,14 @@ private val HSALSA20_SEED = ByteArray(16)
 
 private sealed interface Key {
     operator fun get(index: Int): Byte
-    operator fun set(index: Int, value: Byte)
+
+    operator fun set(
+        index: Int,
+        value: Byte,
+    )
+
     val size: Int
+
     operator fun iterator(): ByteIterator
 }
 
@@ -29,7 +35,10 @@ public value class SecretKey(public val bytes: ByteArray) : Key {
 
     override fun get(index: Int): Byte = bytes[index]
 
-    override fun set(index: Int, value: Byte): Unit = bytes.set(index, value)
+    override fun set(
+        index: Int,
+        value: Byte,
+    ): Unit = bytes.set(index, value)
 
     override val size: Int
         get() = bytes.size
@@ -48,7 +57,10 @@ public value class PrivateKey(public val bytes: ByteArray) : Key {
 
     override fun get(index: Int): Byte = bytes[index]
 
-    override fun set(index: Int, value: Byte): Unit = bytes.set(index, value)
+    override fun set(
+        index: Int,
+        value: Byte,
+    ): Unit = bytes.set(index, value)
 
     override val size: Int
         get() = bytes.size
@@ -67,7 +79,10 @@ public value class PublicKey(public val bytes: ByteArray) : Key {
 
     override fun get(index: Int): Byte = bytes[index]
 
-    override fun set(index: Int, value: Byte): Unit = bytes.set(index, value)
+    override fun set(
+        index: Int,
+        value: Byte,
+    ): Unit = bytes.set(index, value)
 
     override val size: Int
         get() = bytes.size
@@ -119,7 +134,10 @@ public fun generatePublicKey(privateKey: PrivateKey): PublicKey {
  * @param privateKey the sender's private key
  * @return a 32-byte secret key only re-calculable by the sender and recipient
  */
-public fun sharedSecret(publicKey: PublicKey, privateKey: PrivateKey): SecretKey {
+public fun sharedSecret(
+    publicKey: PublicKey,
+    privateKey: PrivateKey,
+): SecretKey {
     val s = ByteArray(KEY_LEN)
     X25519.scalarMult(privateKey.bytes, 0, publicKey.bytes, 0, s, 0)
     val k = ByteArray(KEY_LEN)
